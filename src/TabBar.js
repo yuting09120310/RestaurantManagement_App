@@ -1,42 +1,46 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const TabBar = ({ selectedTab, onTabPress }) => {
+// Import your local images
+import shopIcon from '../Images/shop.png';
+import locationIcon from '../Images/location.png';
+import homeIcon from '../Images/home.png';
+import teaIcon from '../Images/tea.png';
+import profileIcon from '../Images/profile.png';
+
+const TabBar = () => {
+  const navigation = useNavigation();
+
+  const handleTabPress = (tabName) => {
+    navigation.navigate(tabName);
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[styles.tabItem, selectedTab === '線上購物' && styles.selectedTabItem]}
-        onPress={() => onTabPress('線上購物')}
-      >
-        <Image source={{ uri: 'https://picsum.photos/30/30?Random=1' }} style={styles.icon} />
+
+      <TouchableOpacity style={styles.tabItem} onPress={() => handleTabPress('Menu')}>
+        <Image source={shopIcon} style={styles.icon} />
         <Text style={styles.tabText}>線上購物</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tabItem, selectedTab === '門市位置' && styles.selectedTabItem]}
-        onPress={() => onTabPress('門市位置')}
-      >
-        <Image source={{ uri: 'https://picsum.photos/30/30?Random=2' }} style={styles.icon} />
+
+      <TouchableOpacity style={styles.tabItem} onPress={() => handleTabPress('Menu2')}>
+        <Image source={locationIcon} style={styles.icon} />
         <Text style={styles.tabText}>門市位置</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tabItem, selectedTab === '首頁' && styles.selectedTabItem]}
-        onPress={() => onTabPress('首頁')}
-      >
-        <Image source={{ uri: 'https://picsum.photos/30/30?Random=3' }} style={styles.icon} />
+
+      <TouchableOpacity style={styles.tabItem} onPress={() => handleTabPress('Menu3')}>
+        <Image source={homeIcon} style={styles.icon} />
         <Text style={styles.tabText}>首頁</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tabItem, selectedTab === '找好茶' && styles.selectedTabItem]}
-        onPress={() => onTabPress('找好茶')}
-      >
-        <Image source={{ uri: 'https://picsum.photos/30/30?Random=4' }} style={styles.icon} />
+
+      <TouchableOpacity style={styles.tabItem} onPress={() => handleTabPress('Menu4')}>
+        <Image source={teaIcon} style={styles.icon} />
         <Text style={styles.tabText}>找好茶</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tabItem, selectedTab === '會員中心' && styles.selectedTabItem]}
-        onPress={() => onTabPress('會員中心')}
-      >
-        <Image source={{ uri: 'https://picsum.photos/30/30?Random=5' }} style={styles.icon} />
+
+      <TouchableOpacity style={styles.tabItem} onPress={() => handleTabPress('MemberCenter')}>
+        <Image source={profileIcon} style={styles.icon} />
         <Text style={styles.tabText}>會員中心</Text>
       </TouchableOpacity>
     </View>
@@ -56,18 +60,14 @@ const styles = StyleSheet.create({
   tabItem: {
     alignItems: 'center',
   },
-  selectedTabItem: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#333', // 改變選中時的底線顏色
+  tabText: {
+    color: '#007AFF',
+    fontSize: 12, // Adjust font size as needed
   },
   icon: {
     width: 24,
     height: 24,
     marginBottom: 5,
-  },
-  tabText: {
-    fontSize: 12,
-    marginTop: 2,
   },
 });
 

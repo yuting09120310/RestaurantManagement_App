@@ -25,7 +25,12 @@ const LoginPage = ({ onLogin }) => {
     if (response.ok) {
       const data = await response.json();
       console.log('登入成功: ', data);
-      onLogin(); // 調用父組件的 onLogin 函數
+      onLogin({
+        memberName: data.memberName,
+        memberEmail: data.memberEmail,
+        memberPhone: data.memberPhone,
+        profileImage: data.profileImage || 'https://picsum.photos/100/100'
+      }); // 調用父組件的 onLogin 函數，並傳遞使用者資料
     } else {
       console.error('登入失敗 帳號或密碼錯誤', response.statusText);
     }

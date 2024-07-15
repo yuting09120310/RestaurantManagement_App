@@ -1,9 +1,13 @@
-// MemberCenterPage.js
-
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 
-const MemberCenterPage = () => {
+const MemberCenterPage = ({ navigation, route }) => {
+  const { user } = route.params;
+
+  const handleEditProfile = () => {
+    navigation.navigate('ProfileEdit', { user });
+  };
+
   return (
     <View style={styles.outerContainer}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -13,17 +17,17 @@ const MemberCenterPage = () => {
               source={{ uri: 'https://picsum.photos/100/100' }}
               style={styles.profileImage}
             />
-            <Text style={styles.name}>Alex</Text>
+            <Text style={styles.name}>{user.memberName}</Text>
           </View>
 
           <View style={styles.infoSection}>
             <Text style={styles.infoTitle}>會員資訊</Text>
-            <Text style={styles.infoText}>電子郵件: yuting@gmail.com</Text>
-            <Text style={styles.infoText}>電話: 096444111121</Text>
+            <Text style={styles.infoText}>電子郵件: {user.memberEmail}</Text>
+            <Text style={styles.infoText}>電話: {user.memberPhone}</Text>
           </View>
 
           <View style={styles.actions}>
-            <TouchableOpacity style={styles.actionButton}>
+            <TouchableOpacity style={styles.actionButton} onPress={handleEditProfile}>
               <Text style={styles.actionButtonText}>編輯個人資料</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton}>

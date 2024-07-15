@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+
 
 const MenuPage = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('All'); // Default category
 
   useEffect(() => {
     fetch('https://restaurantmanage.ddns.net/api/Menu')
@@ -18,6 +20,14 @@ const MenuPage = () => {
       });
   }, []);
 
+  const filterItemsByCategory = (category) => {
+    if (category === 'All') {
+      return items; // Return all items
+    } else {
+      return items.filter(item => item.productClassId === category);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -28,9 +38,20 @@ const MenuPage = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.banner}>Menu</Text>
+      <View style={styles.banner}>
+        <TouchableOpacity style={selectedCategory === 'All' ? styles.selectedCategoryButton : styles.categoryButton} onPress={() => setSelectedCategory('All')}>
+          <Text style={selectedCategory === 'All' ? styles.selectedCategoryText : styles.categoryText}>All</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={selectedCategory === 1 ? styles.selectedCategoryButton : styles.categoryButton} onPress={() => setSelectedCategory(1)}>
+          <Text style={selectedCategory === 1 ? styles.selectedCategoryText : styles.categoryText}>Category 1</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={selectedCategory === 2 ? styles.selectedCategoryButton : styles.categoryButton} onPress={() => setSelectedCategory(2)}>
+          <Text style={selectedCategory === 2 ? styles.selectedCategoryText : styles.categoryText}>Category 2</Text>
+        </TouchableOpacity>
+        {/* Add more categories as needed */}
+      </View>
       <View style={styles.row}>
-        {items.map((item) => (
+        {filterItemsByCategory(selectedCategory).map((item) => (
           <View key={item.productId} style={styles.item}>
             <Image source={{ uri: `https://restaurantmanage.ddns.net/uploads/Product/${item.productImg1}` }} style={styles.image} />
             <Text style={styles.title}>{item.productName}</Text>
@@ -48,9 +69,33 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   banner: {
-    fontSize: 24,
-    textAlign: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     marginVertical: 20,
+  },
+  categoryButton: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    elevation: 3,
+  },
+  selectedCategoryButton: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#007bff',
+    elevation: 3,
+  },
+  categoryText: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  selectedCategoryText: {
+    fontSize: 16,
+    color: '#fff',
     fontWeight: 'bold',
   },
   row: {
