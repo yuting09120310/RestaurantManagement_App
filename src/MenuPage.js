@@ -102,13 +102,13 @@ const MenuPage = () => {
     <ScrollView style={styles.container}>
       <View style={styles.banner}>
         <TouchableOpacity style={selectedCategory === 'All' ? styles.selectedCategoryButton : styles.categoryButton} onPress={() => setSelectedCategory('All')}>
-          <Text style={selectedCategory === 'All' ? styles.selectedCategoryText : styles.categoryText}>All</Text>
+          <Text style={selectedCategory === 'All' ? styles.selectedCategoryText : styles.categoryText}>全部</Text>
         </TouchableOpacity>
         <TouchableOpacity style={selectedCategory === 1 ? styles.selectedCategoryButton : styles.categoryButton} onPress={() => setSelectedCategory(1)}>
-          <Text style={selectedCategory === 1 ? styles.selectedCategoryText : styles.categoryText}>Category 1</Text>
+          <Text style={selectedCategory === 1 ? styles.selectedCategoryText : styles.categoryText}>炸物</Text>
         </TouchableOpacity>
         <TouchableOpacity style={selectedCategory === 2 ? styles.selectedCategoryButton : styles.categoryButton} onPress={() => setSelectedCategory(2)}>
-          <Text style={selectedCategory === 2 ? styles.selectedCategoryText : styles.categoryText}>Category 2</Text>
+          <Text style={selectedCategory === 2 ? styles.selectedCategoryText : styles.categoryText}>飲料</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.row}>

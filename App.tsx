@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView, StatusBar, StyleSheet, useColorScheme, View, TouchableOpacity, Text, Image } from 'react-native';
 
-// 頁面
+// 页
 import LoginPage from './src/LoginPage';
 import MenuPage from './src/MenuPage';
 import NavigationBar from './src/NavigationBar';
@@ -11,24 +11,32 @@ import TabBar from './src/TabBar';
 import MemberCenterPage from './src/MemberCenterPage';
 import ProfileEditPage from './src/ProfileEditPage';
 import CartPage from './src/CartPage';
+import OrderManagementPage from './src/OrderManagementPage';
+import OrderDetailsPage from './src/OrderDetailsPage'; // 新增的訂單詳情頁面
 
-// 圖片
+// 图片
 import CartIcon from './Images/cart.png';
 
 const Stack = createStackNavigator();
 
-// 示例的抽屉按钮组件
-const DrawerButton = ({ onPress }) => (
-  <TouchableOpacity onPress={onPress} style={styles.drawerButton}>
-    <Image source={CartIcon} style={styles.icon} />
-    <Text style={styles.buttonText}>購物車</Text>
-  </TouchableOpacity>
+// 更新 DrawerButton 组件
+const DrawerButton = ({ onPressCart, onPressOrder }) => (
+  <View style={styles.icons}>
+    <TouchableOpacity onPress={onPressOrder} style={styles.iconItem}>
+      <Image source={{ uri: 'https://picsum.photos/30/30?Random=6' }} style={styles.icon} />
+      <Text style={styles.buttonText}>訂單管理</Text>
+    </TouchableOpacity>
+    <TouchableOpacity onPress={onPressCart} style={styles.iconItem}>
+      <Image source={CartIcon} style={styles.icon} />
+      <Text style={styles.buttonText}>購物車</Text>
+    </TouchableOpacity>
+  </View>
 );
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null); // 儲存使用者資料
+  const [userData, setUserData] = useState(null); // 存储用户数据
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#333333' : '#FFFFFF',
@@ -36,7 +44,7 @@ const App = () => {
 
   const handleLogin = (userData) => {
     setIsLoggedIn(true);
-    setUserData(userData); // 更新使用者資料
+    setUserData(userData); // 更新用户数据
   };
 
   return (
@@ -54,12 +62,41 @@ const App = () => {
                 component={MenuPage}
                 options={({ navigation }) => ({
                   headerTitle: '線上菜單',
-                  headerRight: () => <DrawerButton onPress={() => navigation.navigate('Cart')} />,
+                  headerRight: () => (
+                    <DrawerButton 
+                      onPressCart={() => navigation.navigate('Cart')} 
+                      onPressOrder={() => navigation.navigate('OrderManagement')} 
+                    />
+                  ),
+                  headerRightContainerStyle: styles.headerRightContainer, // Add this line to apply container style
                 })}
               />
-              <Stack.Screen name="MemberCenter" component={MemberCenterPage} options={{ title: '會員中心' }} initialParams={{ user: userData }} />
-              <Stack.Screen name="ProfileEdit" component={ProfileEditPage} options={{ title: '編輯個人資料' }} />
-              <Stack.Screen name="Cart" component={CartPage} options={{ title: '購物車' }} />
+              <Stack.Screen 
+                name="MemberCenter" 
+                component={MemberCenterPage} 
+                options={{ title: '會員中心' }} 
+                initialParams={{ user: userData }} 
+              />
+              <Stack.Screen 
+                name="ProfileEdit" 
+                component={ProfileEditPage} 
+                options={{ title: '編輯個人資料' }} 
+              />
+              <Stack.Screen 
+                name="Cart" 
+                component={CartPage} 
+                options={{ title: '購物車' }} 
+              />
+              <Stack.Screen 
+                name="OrderManagement" 
+                component={OrderManagementPage} 
+                options={{ title: '訂單管理' }} 
+              />
+              {/* <Stack.Screen 
+                name="OrderDetails" 
+                component={OrderDetailsPage} 
+                options={{ title: '訂單詳細信息' }} 
+              /> */}
             </Stack.Navigator>
           )}
         </View>
@@ -72,10 +109,20 @@ const App = () => {
 
 const styles = StyleSheet.create({
   drawerButton: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+  },
+  headerRightContainer: {
+    paddingRight: 10, // Add padding to ensure icons are within the screen
+  },
+  icons: {
+    flexDirection: 'row',
+  },
+  iconItem: {
+    marginHorizontal: 10,
+    alignItems: 'center',
   },
   icon: {
     width: 24,
