@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView, StatusBar, StyleSheet, useColorScheme, View, TouchableOpacity, Text, Image } from 'react-native';
 
-// 页
+// 頁面
 import LoginPage from './src/LoginPage';
 import MenuPage from './src/MenuPage';
 import NavigationBar from './src/NavigationBar';
@@ -14,16 +14,17 @@ import CartPage from './src/CartPage';
 import OrderManagementPage from './src/OrderManagementPage';
 import OrderDetailsPage from './src/OrderDetailsPage'; // 新增的訂單詳情頁面
 
-// 图片
+// 圖片
 import CartIcon from './Images/cart.png';
+import OrderIcon from './Images/order.png';
 
 const Stack = createStackNavigator();
 
-// 更新 DrawerButton 组件
+// 更新 DrawerButton 
 const DrawerButton = ({ onPressCart, onPressOrder }) => (
   <View style={styles.icons}>
     <TouchableOpacity onPress={onPressOrder} style={styles.iconItem}>
-      <Image source={{ uri: 'https://picsum.photos/30/30?Random=6' }} style={styles.icon} />
+    <Image source={OrderIcon} style={styles.icon} />
       <Text style={styles.buttonText}>訂單管理</Text>
     </TouchableOpacity>
     <TouchableOpacity onPress={onPressCart} style={styles.iconItem}>
@@ -36,7 +37,7 @@ const DrawerButton = ({ onPressCart, onPressOrder }) => (
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null); // 存储用户数据
+  const [userData, setUserData] = useState(null);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#333333' : '#FFFFFF',
@@ -44,7 +45,7 @@ const App = () => {
 
   const handleLogin = (userData) => {
     setIsLoggedIn(true);
-    setUserData(userData); // 更新用户数据
+    setUserData(userData); // 更新用戶資料
   };
 
   return (
@@ -68,7 +69,7 @@ const App = () => {
                       onPressOrder={() => navigation.navigate('OrderManagement')} 
                     />
                   ),
-                  headerRightContainerStyle: styles.headerRightContainer, // Add this line to apply container style
+                  headerRightContainerStyle: styles.headerRightContainer, 
                 })}
               />
               <Stack.Screen 
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   headerRightContainer: {
-    paddingRight: 10, // Add padding to ensure icons are within the screen
+    paddingRight: 10, 
   },
   icons: {
     flexDirection: 'row',
