@@ -11,7 +11,7 @@ const MenuPage = () => {
   const [memberId, setMemberId] = useState(3); // 假設memberId為3，根據需要修改
 
   useEffect(() => {
-    fetch('https://restaurantmanage.ddns.net/api/Menu')
+    fetch('https://restaurantmanage.alexbase.net/api/Menu')
       .then((response) => response.json())
       .then((data) => {
         if(data.success){
@@ -61,7 +61,7 @@ const MenuPage = () => {
       quantity: quantity,
     };
 
-    fetch('https://restaurantmanage.ddns.net/api/Cart/add', {
+    fetch('https://restaurantmanage.alexbase.net/api/Cart/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ const MenuPage = () => {
       <View style={styles.row}>
         {filterItemsByCategory(selectedCategory).map((item) => (
           <TouchableOpacity key={item.productId} style={styles.item} onPress={() => handleItemPress(item)}>
-            <Image source={{ uri: `https://restaurantmanage.ddns.net/uploads/Product/${item.productImg1}` }} style={styles.image} />
+            <Image source={{ uri: `https://restaurantmanage.alexbase.net/uploads/Product/${item.productImg1}` }} style={styles.image} />
             <Text style={styles.title}>{item.productName}</Text>
             <Text style={styles.price}>NT${item.price}</Text>
           </TouchableOpacity>

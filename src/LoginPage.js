@@ -10,7 +10,7 @@ const LoginPage = ({ onLogin }) => {
     console.log('Password:', password);
 
     try {
-      const response = await fetch('https://restaurantmanage.ddns.net/api/Login', {
+      const response = await fetch('https://restaurantmanage.alexbase.net/api/Login', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

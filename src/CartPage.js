@@ -7,7 +7,7 @@ const CartPage = ({ navigation }) => {
   const memberId = 3; // 這裡替換成實際的 memberId
 
   useEffect(() => {
-    fetch(`https://restaurantmanage.ddns.net/api/Cart/${memberId}`)
+    fetch(`https://restaurantmanage.alexbase.net/api/Cart/${memberId}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
@@ -26,7 +26,7 @@ const CartPage = ({ navigation }) => {
   }, []);
 
   const deleteCartItem = (cartId) => {
-    fetch('https://restaurantmanage.ddns.net/api/Cart/delete', {
+    fetch('https://restaurantmanage.alexbase.net/api/Cart/delete', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ const CartPage = ({ navigation }) => {
 
   const createOrder = () => {
     console.log(memberId)
-    fetch('https://restaurantmanage.ddns.net/api/Order', {
+    fetch('https://restaurantmanage.alexbase.net/api/Order', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ const CartPage = ({ navigation }) => {
 
   const renderCartItem = ({ item }) => (
     <View style={styles.cartItem}>
-      <Image source={{ uri: `https://restaurantmanage.ddns.net/uploads/Product/${item.productImg1}` }} style={styles.itemImage} />
+      <Image source={{ uri: `https://restaurantmanage.alexbase.net/uploads/Product/${item.productImg1}` }} style={styles.itemImage} />
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>{item.productName}</Text>
         <Text style={styles.itemPrice}>${item.price}</Text>

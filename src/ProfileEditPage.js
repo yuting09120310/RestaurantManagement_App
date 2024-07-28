@@ -10,7 +10,7 @@ const ProfileEditPage = ({ route, navigation }) => {
 
   const handleSave = async () => {
     // 這裡處理更新邏輯
-    const response = await fetch('https://restaurantmanage.ddns.net/api/UpdateMember', {
+    const response = await fetch('https://restaurantmanage.alexbase.net/api/UpdateMember', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
