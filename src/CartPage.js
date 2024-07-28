@@ -1,28 +1,88 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 
 const CartPage = ({ navigation }) => {
-  // 假設有一個商品列表的資料
-  const cartItems = [
-    { id: '1', name: '綠茶', price: 100, quantity: 2, image: 'https://picsum.photos/100/100?random=1' },
-    { id: '2', name: '紅茶', price: 150, quantity: 1, image: 'https://picsum.photos/100/100?random=2' },
-    { id: '3', name: '奶茶', price: 200, quantity: 3, image: 'https://picsum.photos/100/100?random=3' },
-    { id: '4', name: '奶茶', price: 200, quantity: 3, image: 'https://picsum.photos/100/100?random=4' },
-    { id: '5', name: '奶茶', price: 200, quantity: 3, image: 'https://picsum.photos/100/100?random=5' },
-    { id: '6', name: '奶茶', price: 200, quantity: 3, image: 'https://picsum.photos/100/100?random=6' },
-    { id: '7', name: '奶茶', price: 200, quantity: 3, image: 'https://picsum.photos/100/100?random=7' },
-    { id: '8', name: '奶茶', price: 200, quantity: 3, image: 'https://picsum.photos/100/100?random=8' },
-    { id: '9', name: '奶茶', price: 200, quantity: 3, image: 'https://picsum.photos/100/100?random=9' },
-  ];
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const memberId = 3; // 這裡替換成實際的 memberId
+
+  useEffect(() => {
+    fetch(`https://restaurantmanage.ddns.net/api/Cart/${memberId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setCartItems(data.data);
+          setLoading(false);
+        } else {
+          Alert.alert('錯誤', '獲取購物車資料失敗，請稍後重試。');
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching cart items:', error);
+        setLoading(false);
+        Alert.alert('錯誤', '獲取購物車資料失敗，請稍後重試。');
+      });
+  }, []);
+
+  const deleteCartItem = (cartId) => {
+    fetch('https://restaurantmanage.ddns.net/api/Cart/delete', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cartId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setCartItems(cartItems.filter(item => item.cartId !== cartId));
+          Alert.alert('成功', '商品已成功刪除');
+        } else {
+          Alert.alert('錯誤', '刪除商品失敗，請稍後重試。');
+        }
+      })
+      .catch((error) => {
+        console.error('Error deleting cart item:', error);
+        Alert.alert('錯誤', '刪除商品失敗，請稍後重試。');
+      });
+  };
+
+  const createOrder = () => {
+    console.log(memberId)
+    fetch('https://restaurantmanage.ddns.net/api/Order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ memberId: memberId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          Alert.alert('成功', '訂單已成功創建');
+          setCartItems([]);
+        } else {
+          Alert.alert('錯誤', data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error creating order:', error);
+        Alert.alert('錯誤', '創建訂單失敗，請稍後重試。');
+      });
+  };
 
   const renderCartItem = ({ item }) => (
     <View style={styles.cartItem}>
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
+      <Image source={{ uri: `https://restaurantmanage.ddns.net/uploads/Product/${item.productImg1}` }} style={styles.itemImage} />
       <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemName}>{item.productName}</Text>
         <Text style={styles.itemPrice}>${item.price}</Text>
         <Text style={styles.itemQuantity}>數量: {item.quantity}</Text>
       </View>
+      <TouchableOpacity style={styles.deleteButton} onPress={() => deleteCartItem(item.cartId)}>
+        <Image source={require('../Images/delete_icon.png')} style={styles.deleteIcon} />
+      </TouchableOpacity>
     </View>
   );
 
@@ -30,19 +90,27 @@ const CartPage = ({ navigation }) => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>購物車</Text>
       <FlatList
         data={cartItems}
         renderItem={renderCartItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.cartId.toString()}
         contentContainerStyle={styles.cartList}
       />
       <View style={styles.totalContainer}>
         <Text style={styles.totalText}>總金額: ${getTotalPrice()}</Text>
       </View>
-      <TouchableOpacity style={styles.checkoutButton} onPress={() => alert('結帳功能未實作')}>
+      <TouchableOpacity style={styles.checkoutButton} onPress={createOrder}>
         <Text style={styles.checkoutButtonText}>結帳</Text>
       </TouchableOpacity>
     </View>
@@ -71,6 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     borderRadius: 8,
     marginBottom: 16,
+    position: 'relative',
   },
   itemImage: {
     width: 80,
@@ -95,6 +164,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
   },
+  deleteButton: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    borderRadius: 50,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteIcon: {
+    width: 24,
+    height: 24,
+  },
   totalContainer: {
     paddingVertical: 16,
     borderTopWidth: 1,
@@ -115,6 +197,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

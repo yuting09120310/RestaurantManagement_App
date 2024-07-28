@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert, Modal, Button } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert, Modal, Button, TextInput } from 'react-native';
 
 const MenuPage = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('All'); // Default category
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [quantity, setQuantity] = useState('1');
+  const [memberId, setMemberId] = useState(3); // 假設memberId為3，根據需要修改
 
   useEffect(() => {
     fetch('https://restaurantmanage.ddns.net/api/Menu')
       .then((response) => response.json())
       .then((data) => {
-        setItems(data);
-        setLoading(false);
+        if(data.success){
+          setItems(data.data);
+          setLoading(false);
+        }else {
+          Alert.alert('錯誤', '菜單載入失敗，請稍後重試。');
+        }
       })
       .catch((error) => {
         console.error('Error fetching menu:', error);
@@ -25,7 +29,7 @@ const MenuPage = () => {
 
   const filterItemsByCategory = (category) => {
     if (category === 'All') {
-      return items; // Return all items
+      return items;
     } else {
       return items.filter(item => item.productClassId === category);
     }
@@ -41,30 +45,48 @@ const MenuPage = () => {
       submitOrder(selectedItem.productId, parseInt(quantity));
       setModalVisible(false);
     } else {
-      Alert.alert('錯誤', '請輸入有效數量（大於0）。');
+      Alert.alert(
+        '錯誤',
+        '請輸入有效數量（大於0）。',
+        [{ text: '確定' }]
+      );
     }
   };
 
   const submitOrder = (productId, quantity) => {
-    // Example POST request to submit order
-    fetch('https://restaurantmanage.ddns.net/api/SubmitOrder', {
+    const cartData = {
+      cartId: 0, // 假設cartId為0，根據需要修改
+      memberId: memberId,
+      productId: productId,
+      quantity: quantity,
+    };
+
+    fetch('https://restaurantmanage.ddns.net/api/Cart/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        productId: productId,
-        quantity: quantity,
-      }),
+      body: JSON.stringify(cartData),
     })
     .then((response) => response.json())
     .then((data) => {
-      // Handle success response from API
-      Alert.alert('訂單提交成功', `訂單號：${data.orderId}`);
+      if (data.success) {
+        Alert.alert(
+          '操作成功',
+          data.message,
+          [{ text: '確定' }]
+        );
+      } else {
+        throw new Error(data.message);
+      }
     })
     .catch((error) => {
       console.error('Error submitting order:', error);
-      Alert.alert('錯誤', '訂單提交失敗，請稍後重試。');
+      Alert.alert(
+        '新增錯誤',
+        '新增失敗，請稍後重試。',
+        [{ text: '確定' }]
+      );
     });
   };
 
@@ -88,7 +110,6 @@ const MenuPage = () => {
         <TouchableOpacity style={selectedCategory === 2 ? styles.selectedCategoryButton : styles.categoryButton} onPress={() => setSelectedCategory(2)}>
           <Text style={selectedCategory === 2 ? styles.selectedCategoryText : styles.categoryText}>Category 2</Text>
         </TouchableOpacity>
-        {/* Add more categories as needed */}
       </View>
       <View style={styles.row}>
         {filterItemsByCategory(selectedCategory).map((item) => (
@@ -100,7 +121,6 @@ const MenuPage = () => {
         ))}
       </View>
 
-      {/* Modal for selecting quantity */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -110,19 +130,19 @@ const MenuPage = () => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>{selectedItem ? `${selectedItem.productName} - NT$${selectedItem.price}` : ''}</Text>
-            <Picker
-              selectedValue={quantity}
-              onValueChange={(itemValue, itemIndex) => setQuantity(itemValue)}
-            >
-              <Picker.Item label="1" value="1" />
-              <Picker.Item label="2" value="2" />
-              <Picker.Item label="3" value="3" />
-              <Picker.Item label="4" value="4" />
-              <Picker.Item label="5" value="5" />
-            </Picker>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={quantity}
+              onChangeText={(text) => setQuantity(text)}
+            />
             <View style={styles.modalButtonContainer}>
-              <Button title="取消" onPress={() => setModalVisible(false)} />
-              <Button title="確定" onPress={handleConfirm} />
+              <View style={styles.modalButton}>
+                <Button title="取消" onPress={() => setModalVisible(false)} />
+              </View>
+              <View style={styles.modalButton}>
+                <Button title="確定" onPress={handleConfirm} />
+              </View>
             </View>
           </View>
         </View>
@@ -236,9 +256,22 @@ const styles = StyleSheet.create({
   },
   modalButtonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 20,
+    justifyContent: 'space-between',
+    width: '80%',
+  },
+  modalButton: {
+    flex: 1,
+    marginHorizontal: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    width: '80%',
+    textAlign: 'center',
   },
 });
 

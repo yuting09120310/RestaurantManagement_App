@@ -1,38 +1,43 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
 const LoginPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    // 這裡處理登錄邏輯
     console.log('Username:', username);
     console.log('Password:', password);
-  
-    const response = await fetch('https://restaurantmanage.ddns.net/api/Login', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        memberAccount: username,
-        memberPassword: password
-      })
-    });
-  
-    if (response.ok) {
+
+    try {
+      const response = await fetch('https://restaurantmanage.ddns.net/api/Login', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          memberAccount: username,
+          memberPassword: password
+        })
+      });
+
       const data = await response.json();
-      console.log('登入成功: ', data);
-      onLogin({
-        memberName: data.memberName,
-        memberEmail: data.memberEmail,
-        memberPhone: data.memberPhone,
-        profileImage: data.profileImage || 'https://picsum.photos/100/100'
-      }); // 調用父組件的 onLogin 函數，並傳遞使用者資料
-    } else {
-      console.error('登入失敗 帳號或密碼錯誤', response.statusText);
+
+      if (response.ok && data.success) {
+        console.log('登入成功: ', data.data);
+        onLogin({
+          memberName: data.data.memberName,
+          memberEmail: data.data.memberEmail,
+          memberPhone: data.data.memberPhone,
+          profileImage: data.data.profileImage || 'https://picsum.photos/100/100'
+        }); // 調用父組件的 onLogin 函數，並傳遞使用者資料
+      } else {
+        Alert.alert('登入失敗', data.message || '帳號或密碼錯誤');
+      }
+    } catch (error) {
+      console.error('登入失敗', error);
+      Alert.alert('錯誤', '登入失敗，請稍後重試。');
     }
   };
 
