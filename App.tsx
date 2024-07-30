@@ -12,7 +12,7 @@ import MemberCenterPage from './src/MemberCenterPage';
 import ProfileEditPage from './src/ProfileEditPage';
 import CartPage from './src/CartPage';
 import OrderManagementPage from './src/OrderManagementPage';
-import OrderDetailsPage from './src/OrderDetailsPage'; // 新增的訂單詳情頁面
+import OrderDetailsPage from './src/OrderDetailsPage';
 
 // 圖片
 import CartIcon from './Images/cart.png';
@@ -20,11 +20,11 @@ import OrderIcon from './Images/order.png';
 
 const Stack = createStackNavigator();
 
-// 更新 DrawerButton 
+// 更新 DrawerButton 组件
 const DrawerButton = ({ onPressCart, onPressOrder }) => (
   <View style={styles.icons}>
     <TouchableOpacity onPress={onPressOrder} style={styles.iconItem}>
-    <Image source={OrderIcon} style={styles.icon} />
+      <Image source={OrderIcon} style={styles.icon} />
       <Text style={styles.buttonText}>訂單管理</Text>
     </TouchableOpacity>
     <TouchableOpacity onPress={onPressCart} style={styles.iconItem}>
@@ -37,7 +37,7 @@ const DrawerButton = ({ onPressCart, onPressOrder }) => (
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(null); // 存储用户数据
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#333333' : '#FFFFFF',
@@ -45,63 +45,69 @@ const App = () => {
 
   const handleLogin = (userData) => {
     setIsLoggedIn(true);
-    setUserData(userData); // 更新用戶資料
+    setUserData(userData); // 更新用户数据
   };
+
+  if (!isLoggedIn || !userData) {
+    return (
+      <NavigationContainer>
+        <SafeAreaView style={[backgroundStyle, { flex: 1 }]}>
+          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={backgroundStyle.backgroundColor} />
+          <LoginPage onLogin={handleLogin} />
+        </SafeAreaView>
+      </NavigationContainer>
+    );
+  }
 
   return (
     <NavigationContainer>
       <SafeAreaView style={[backgroundStyle, { flex: 1 }]}>
         <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={backgroundStyle.backgroundColor} />
-
         <View style={{ flex: 1 }}>
-          {!isLoggedIn ? (
-            <LoginPage onLogin={handleLogin} />
-          ) : (
-            <Stack.Navigator>
-              <Stack.Screen
-                name="Menu"
-                component={MenuPage}
-                options={({ navigation }) => ({
-                  headerTitle: '線上菜單',
-                  headerRight: () => (
-                    <DrawerButton 
-                      onPressCart={() => navigation.navigate('Cart')} 
-                      onPressOrder={() => navigation.navigate('OrderManagement')} 
-                    />
-                  ),
-                  headerRightContainerStyle: styles.headerRightContainer, 
-                })}
-              />
-              <Stack.Screen 
-                name="MemberCenter" 
-                component={MemberCenterPage} 
-                options={{ title: '會員中心' }} 
-                initialParams={{ user: userData }} 
-              />
-              <Stack.Screen 
-                name="ProfileEdit" 
-                component={ProfileEditPage} 
-                options={{ title: '編輯個人資料' }} 
-              />
-              <Stack.Screen 
-                name="Cart" 
-                component={CartPage} 
-                options={{ title: '購物車' }} 
-              />
-              <Stack.Screen 
-                name="OrderManagement" 
-                component={OrderManagementPage} 
-                options={{ title: '訂單管理' }} 
-              />
-              {/* <Stack.Screen 
-                name="OrderDetails" 
-                component={OrderDetailsPage} 
-                options={{ title: '訂單詳細信息' }} 
-              /> */}
-            </Stack.Navigator>
-          )}
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Menu"
+              component={MenuPage}
+              options={({ navigation }) => ({
+                headerTitle: '線上菜單',
+                headerRight: () => (
+                  <DrawerButton 
+                    onPressCart={() => navigation.navigate('Cart')} 
+                    onPressOrder={() => navigation.navigate('OrderManagement')} 
+                  />
+                ),
+                headerRightContainerStyle: styles.headerRightContainer,
+              })}
+              initialParams={{ user: userData }} // 傳遞使用者資料
+            />
+            <Stack.Screen 
+              name="MemberCenter" 
+              component={MemberCenterPage} 
+              options={{ title: '會員中心' }} 
+              initialParams={{ user: userData }} 
+            />
+            <Stack.Screen 
+              name="ProfileEdit" 
+              component={ProfileEditPage} 
+              options={{ title: '編輯個人資料' }} 
+            />
+            <Stack.Screen 
+              name="Cart" 
+              component={CartPage} 
+              options={{ title: '購物車' }} 
+            />
+            <Stack.Screen 
+              name="OrderManagement" 
+              component={OrderManagementPage} 
+              options={{ title: '訂單管理' }} 
+            />
+            <Stack.Screen 
+              name="OrderDetails" 
+              component={OrderDetailsPage} 
+              options={{ title: '訂單詳細信息' }} 
+            />
+          </Stack.Navigator>
         </View>
-
         {isLoggedIn && <TabBar />}
       </SafeAreaView>
     </NavigationContainer>
@@ -116,7 +122,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   headerRightContainer: {
-    paddingRight: 10, 
+    paddingRight: 10, // Add padding to ensure icons are within the screen
   },
   icons: {
     flexDirection: 'row',

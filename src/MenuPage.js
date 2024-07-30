@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert, Modal, Button, TextInput } from 'react-native';
 
-const MenuPage = () => {
+const MenuPage = ({ route }) => {
+  const { user } = route.params; // 从路由参数获取 memberId
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [quantity, setQuantity] = useState('1');
-  const [memberId, setMemberId] = useState(3); // 假設memberId為3，根據需要修改
 
   useEffect(() => {
     fetch('https://restaurantmanage.alexbase.net/api/Menu')
@@ -56,7 +56,7 @@ const MenuPage = () => {
   const submitOrder = (productId, quantity) => {
     const cartData = {
       cartId: 0, // 假設cartId為0，根據需要修改
-      memberId: memberId,
+      memberId: user.memberId,
       productId: productId,
       quantity: quantity,
     };

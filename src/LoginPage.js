@@ -27,6 +27,7 @@ const LoginPage = ({ onLogin }) => {
       if (response.ok && data.success) {
         console.log('登入成功: ', data.data);
         onLogin({
+          memberId: data.data.memberId,
           memberName: data.data.memberName,
           memberEmail: data.data.memberEmail,
           memberPhone: data.data.memberPhone,
