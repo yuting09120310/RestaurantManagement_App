@@ -19,7 +19,7 @@ const TabBar = () => {
   return (
     <View style={styles.container}>
 
-      <TouchableOpacity style={styles.tabItem} onPress={() => handleTabPress('Menu')}>
+      <TouchableOpacity style={styles.tabItem} onPress={() => handleTabPress('MenuPage')}>
         <Image source={shopIcon} style={styles.icon} />
         <Text style={styles.tabText}>線上購物</Text>
       </TouchableOpacity>

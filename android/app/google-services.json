@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "881359540334",
+    "project_id": "alexproject-376418",
+    "storage_bucket": "alexproject-376418.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881359540334:android:44e11a04a7b3c29ef0967f",
+        "android_client_info": {
+          "package_name": "com.restaurantmanagement_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881359540334-jl32j09lfl4jiabasinod14nsvsb8rkk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd-YvGf0akuPUONCMQeHqKasvO8m3dPxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "881359540334-jl32j09lfl4jiabasinod14nsvsb8rkk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

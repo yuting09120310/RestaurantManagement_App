@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { SafeAreaView, StatusBar, StyleSheet, useColorScheme, View, TouchableOpacity, Text, Image } from 'react-native';
+import { SafeAreaView, StatusBar, StyleSheet, useColorScheme, View, TouchableOpacity, Text, Image, Alert } from 'react-native';
+
+// 引入 Firebase 推播
+import messaging from '@react-native-firebase/messaging';
+import PushNotification from 'react-native-push-notification';
+
 
 // 頁面
 import LoginPage from './src/LoginPage';
@@ -13,14 +18,17 @@ import ProfileEditPage from './src/ProfileEditPage';
 import CartPage from './src/CartPage';
 import OrderManagementPage from './src/OrderManagementPage';
 import OrderDetailsPage from './src/OrderDetailsPage';
+import ProductDetailPage from './src/ProductDetailPage';
 
 // 圖片
 import CartIcon from './Images/cart.png';
 import OrderIcon from './Images/order.png';
 
+import { configurePushNotifications } from './pushNotificationHandler'; // 引入推播處理函式
+
+
 const Stack = createStackNavigator();
 
-// 更新 DrawerButton 组件
 const DrawerButton = ({ onPressCart, onPressOrder }) => (
   <View style={styles.icons}>
     <TouchableOpacity onPress={onPressOrder} style={styles.iconItem}>
@@ -48,6 +56,26 @@ const App = () => {
     setUserData(userData); // 更新用户数据
   };
 
+
+  useEffect(() => {
+    configurePushNotifications()
+  }, []);
+
+
+  // 處理 FCM 註冊
+  useEffect(() => {
+    const getToken = async () => {
+      const fcmToken = await messaging().getToken();
+      if (fcmToken) {
+        console.log('FCM Token:', fcmToken);
+        // 在此處發送推播令牌到你的伺服器
+      }
+    };
+
+    getToken();
+  }, []);
+
+
   if (!isLoggedIn || !userData) {
     return (
       <NavigationContainer>
@@ -66,7 +94,7 @@ const App = () => {
         <View style={{ flex: 1 }}>
           <Stack.Navigator>
             <Stack.Screen
-              name="Menu"
+              name="MenuPage"
               component={MenuPage}
               options={({ navigation }) => ({
                 headerTitle: '線上菜單',
@@ -94,7 +122,8 @@ const App = () => {
             <Stack.Screen 
               name="Cart" 
               component={CartPage} 
-              options={{ title: '購物車' }} 
+              options={{ title: '購物車' }}
+              initialParams={{ user: userData }}
             />
             <Stack.Screen 
               name="OrderManagement" 
@@ -105,6 +134,11 @@ const App = () => {
               name="OrderDetails" 
               component={OrderDetailsPage} 
               options={{ title: '訂單詳細信息' }} 
+            />
+            <Stack.Screen 
+              name="ProductDetailPage" 
+              component={ProductDetailPage} 
+              options={{ title: '商品明細' }} 
             />
           </Stack.Navigator>
         </View>
